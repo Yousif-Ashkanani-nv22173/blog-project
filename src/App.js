@@ -1,16 +1,11 @@
 
 import './App.css';
-import Card from "./components/Card"
+import HomePage from './pages/HomePage';
+
 function App() {
   return (
     <div className="App">
-      <header className='app-header gap-y-4'>
-      <Card/>
-     <Card/>
-     <Card/>
-
-      </header>
-    
+<HomePage/>
     </div>
   );
 }
