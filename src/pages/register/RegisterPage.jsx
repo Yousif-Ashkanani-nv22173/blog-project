@@ -1,9 +1,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import toast from 'react-hot-toast'
+
 import MainLayout from "../../components/MainLayout";
+import { signup } from "../../services/index/users";
 
 const RegisterPage = () => {
+  const { mutate, isLoading } = useMutation({
+    mutationFn: ({ name, email, password }) => {
+      return signup({ name, email, password });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      toast.error(error.message)
+      console.log(error);
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -20,20 +37,21 @@ const RegisterPage = () => {
   });
 
   const submitHandler = (data) => {
-    console.log(data);
+    const { name, email, password } = data;
+    mutate({ name, email, password });
   };
 
   const password = watch("password");
 
   return (
     <MainLayout>
-      <section className="container px-5 py-10 mx-auto">
+      <section className="container mx-auto px-5 py-10">
         <div className="w-full max-w-sm mx-auto">
-          <h1 className="mb-8 text-2xl font-bold text-center font-roboto text-dark-hard">
+          <h1 className="font-roboto text-2xl font-bold text-center text-dark-hard mb-8">
             Sign Up
           </h1>
           <form onSubmit={handleSubmit(submitHandler)}>
-            <div className="flex flex-col w-full mb-6">
+            <div className="flex flex-col mb-6 w-full">
               <label
                 htmlFor="name"
                 className="text-[#5a7184] font-semibold block"
@@ -59,12 +77,12 @@ const RegisterPage = () => {
                 }`}
               />
               {errors.name?.message && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.name?.message}
                 </p>
               )}
             </div>
-            <div className="flex flex-col w-full mb-6">
+            <div className="flex flex-col mb-6 w-full">
               <label
                 htmlFor="email"
                 className="text-[#5a7184] font-semibold block"
@@ -91,12 +109,12 @@ const RegisterPage = () => {
                 }`}
               />
               {errors.email?.message && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.email?.message}
                 </p>
               )}
             </div>
-            <div className="flex flex-col w-full mb-6">
+            <div className="flex flex-col mb-6 w-full">
               <label
                 htmlFor="password"
                 className="text-[#5a7184] font-semibold block"
@@ -122,12 +140,12 @@ const RegisterPage = () => {
                 }`}
               />
               {errors.password?.message && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.password?.message}
                 </p>
               )}
             </div>
-            <div className="flex flex-col w-full mb-6">
+            <div className="flex flex-col mb-6 w-full">
               <label
                 htmlFor="confirmPassword"
                 className="text-[#5a7184] font-semibold block"
@@ -154,7 +172,7 @@ const RegisterPage = () => {
                 }`}
               />
               {errors.confirmPassword?.message && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="text-red-500 text-xs mt-1">
                   {errors.confirmPassword?.message}
                 </p>
               )}
@@ -167,8 +185,8 @@ const RegisterPage = () => {
             </Link>
             <button
               type="submit"
-              disabled={!isValid}
-              className="w-full px-8 py-4 my-6 text-lg font-bold text-white rounded-lg bg-primary disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={!isValid || isLoading}
+              className="bg-primary text-white font-bold text-lg py-4 px-8 w-full rounded-lg my-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               Register
             </button>
